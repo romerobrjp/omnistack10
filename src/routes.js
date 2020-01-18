@@ -1,17 +1,13 @@
 const { Router } = require('express');
 const axios = require('axios');
+const DevController = require('./controllers/DevController')
 
 const routes = Router();
 
-routes.get('/', (req, res) => {
-  console.log(req.body);
-  return res.json({message: 'Hello Omnistack 10!'});
-});
+routes.get('/', DevController.hello);
 
-routes.get('/devs/:username', async (req, res) => {
-  const githubUsername = req.params.username;
-  const githubResponse = await axios.get(`https://api.github.com/users/${githubUsername}`);
-  return res.json(githubResponse.data);
-});
+routes.get('/devs/:username', DevController.getDev);
+
+routes.post('/devs', DevController.store);
 
 module.exports = routes;
