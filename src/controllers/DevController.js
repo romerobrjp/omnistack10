@@ -1,5 +1,6 @@
 const axios = require('axios'); // axios lib allows to make API calls
 const Dev = require('../models/Dev');
+const StringUtils = require('../utils/StringUtils');
 
 module.exports = {
   hello(req, res) {
@@ -9,6 +10,12 @@ module.exports = {
   async getOne(req, res) {
     const githubResponse = await axios.get(`https://api.github.com/users/${req.params.username}`);
     return res.json(githubResponse.data);
+  },
+
+  async getAll(req, res) {
+    const devs = await Dev.find();
+
+    return res.json(devs);
   },
 
   async create(req, res) {
@@ -26,7 +33,7 @@ module.exports = {
   
       const { name = login, avatar_url, bio } = githubResponse.data;
   
-      const techsArray = techs.split(',').map(tech => tech.trim());
+      const techsArray = StringUtils.parseStringAsArray(techs);
   
       const location = {
         type: 'Point',
