@@ -10,6 +10,7 @@ routes.get('/', DevController.hello);
 routes.get('/devs/:username', DevController.getOne);
 routes.get('/devs', DevController.getAll);
 routes.post('/devs', DevController.create);
+routes.delete('/devs', DevController.delete);
 
 // Search
 routes.get('/search', SearchController.index);

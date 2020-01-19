@@ -53,5 +53,26 @@ module.exports = {
     } else {
       return res.json( { message: `Couldn\'t create: the dev ${dev.github_username} aleady exists.` });
     }
+  },
+
+  async update(req, res) {
+    re.json({ message: 'update action' });
+  },
+
+  async delete(req, res) {
+    const { github_username } = req.body;
+
+    console.log(github_username);
+
+    const devToDestroy = await Dev.findOne({ github_username });
+
+    console.log('devDestroy: ', devToDestroy);
+
+    if (devToDestroy) {
+      await Dev.deleteOne({ github_username });
+      res.json({ message: `Dev ${github_username} was successfully destroyed.` });
+    } else {
+      await res.json({ message: `Cannot delete: Dev ${github_username} does not exists.` });
+    }
   }
 }
