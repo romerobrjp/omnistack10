@@ -3,18 +3,15 @@ const Dev = require('../models/Dev');
 
 module.exports = {
   hello(req, res) {
-    console.log(req.body);
     return res.json({message: 'Hello Omnistack 10!'});
   },
 
-  async getDev(req, res) {
-    const githubUsername = req.params.username;
-    const githubResponse = await axios.get(`https://api.github.com/users/${githubUsername}`);
+  async getOne(req, res) {
+    const githubResponse = await axios.get(`https://api.github.com/users/${req.params.username}`);
     return res.json(githubResponse.data);
   },
 
-  async store(req, res) {
-    console.log(req.body);
+  async create(req, res) {
     const {
       github_username,
       techs,
@@ -22,28 +19,32 @@ module.exports = {
       longitude
     } = req.body;
 
-    const githubResponse = await axios.get(`https://api.github.com/users/${github_username}`);
+    let dev = await Dev.findOne({ github_username });
 
-    const { name = login, avatar_url, bio } = githubResponse.data;
+    if (!dev) {
+      const githubResponse = await axios.get(`https://api.github.com/users/${github_username}`);
+  
+      const { name = login, avatar_url, bio } = githubResponse.data;
+  
+      const techsArray = techs.split(',').map(tech => tech.trim());
+  
+      const location = {
+        type: 'Point',
+        coordinates: [longitude, latitude],
+      }
+  
+      dev = await Dev.create({
+        github_username: github_username,
+        name,
+        avatar_url,
+        bio,
+        techs: techsArray,
+        location,
+      });
 
-    const techsArray = techs.split(',').map(tech => tech.trim());
-
-    const location = {
-      type: 'Point',
-      coordinates: [longitude, latitude],
+      return res.json(dev);
+    } else {
+      return res.json( { message: `Couldn\'t create: the dev ${dev.github_username} aleady exists.` });
     }
-
-    const dev = await Dev.create({
-      github_username,
-      name,
-      avatar_url,
-      bio,
-      techs: techsArray,
-      location,
-    });
-
-    console.log(dev);
-
-    return res.json(dev);
   }
 }
