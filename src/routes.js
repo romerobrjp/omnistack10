@@ -6,8 +6,8 @@ const routes = Router();
 
 routes.get('/', DevController.hello);
 
-routes.get('/devs/:username', DevController.getDev);
+routes.get('/devs/:username', DevController.getOne);
 
-routes.post('/devs', DevController.store);
+routes.post('/devs', DevController.create);
 
 module.exports = routes;
